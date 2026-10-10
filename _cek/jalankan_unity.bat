@@ -43,4 +43,6 @@ goto done
 :done
 echo.
 echo Log ada di: %LOGDIR%
-pause
+REM pause hanya saat file ini diklik dua kali (tanpa argumen), supaya tidak
+REM memblokir pemakaian dari skrip atau terminal.
+if "%~1"=="" pause
