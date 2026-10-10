@@ -6,9 +6,8 @@ Project Unity 2022.3 LTS: arena 3D dengan AI musuh yang mengejar Player memakai
 Semua yang diminta soal **sudah jadi, sudah di-bake, dan sudah diuji otomatis**
 (27 pemeriksaan, 0 gagal - lihat bagian 5).
 
-> Catatan: folder `Library/`, `Temp/`, dan file `.log` sengaja tidak ikut di repo
-> (lihat `.gitignore`). Unity akan membuat ulang `Library/` saat project pertama kali
-> dibuka, dan log bisa dibuat lagi lewat `_cek/jalankan_unity.bat`.
+> Catatan: folder `Library/` dan `Temp/` sengaja tidak ikut di repo (lihat `.gitignore`).
+> Unity akan membuat ulang keduanya saat project pertama kali dibuka.
 
 ---
 
@@ -202,14 +201,7 @@ turun. Hasil nyata: HP 100 -> 75 -> 50 -> 25 -> 0, musuh hancur pada **tembakan 
 
 ```
 UTS_teknologi_game/
-├── .gitignore                 <- abaikan Library/, Temp/, *.log
-├── AGENTS.md                  <- aturan project & penunjuk antislop
 ├── README.md                  <- file ini (penjelasan & cara pakai)
-├── CATATAN_TEORI.md           <- ringkasan teori NavMesh & Raycast untuk laporan
-├── CHECKLIST_BUKTI.md         <- daftar screenshot/video yang perlu diambil
-├── _cek/
-│   ├── lint_unity_cs.py       <- pemeriksa statis file C#
-│   └── jalankan_unity.bat     <- bantu jalankan build/verify/screenshot
 └── UTS_TeknologiGame/         <- PROJECT UNITY (buka yang ini)
     ├── Assets/
     │   ├── Scenes/
@@ -226,24 +218,24 @@ UTS_teknologi_game/
     │       ├── GameHUD.cs            <- tombol pintas (panel default mati)
     │       ├── InfoPenanda.cs        <- catatan isi scene
     │       └── Editor/
-    │           ├── SceneBuilder.cs   <- pembuat scene + BAKE NavMesh
-    │           ├── PlayModeCheck.cs  <- verifikasi otomatis Play mode
-    │           ├── ScreenshotBukti.cs <- screenshot sudut arena (tanpa HUD)
-    │           └── ScreenshotHUD.cs   <- screenshot yang menangkap HUD
-    ├── Bukti_Screenshot/           <- screenshot hasil render otomatis
+    │           └── SceneBuilder.cs   <- pembuat scene + BAKE NavMesh
     ├── Packages/manifest.json
     └── ProjectSettings/
 ```
 
-Log (`_cek/*.log`) tidak ikut di repo karena berisi path pribadi dan IP jaringan lokal.
-Jalankan `_cek/jalankan_unity.bat` untuk membuatnya lagi.
+Catatan pribadi untuk laporan (catatan teori, checklist bukti), folder alat bantu
+(`_cek/`), screenshot verifikasi, dan skrip pengujian sengaja **tidak** ikut di repo
+ini supaya isinya fokus pada project yang bisa langsung dijalankan.
+
+
 
 ---
 
 ## 5. Verifikasi otomatis (SUDAH dijalankan - semua lulus)
 
-Scene dibuat dan diuji **tanpa GUI** (batchmode) memakai `PlayModeCheck`.
-Hasil: **27 pemeriksaan, 0 gagal**.
+Scene dibuat dan diuji **tanpa GUI** (batchmode) memakai harness verifikasi Play mode.
+Hasil: **27 pemeriksaan, 0 gagal**. Angka-angka di tabel bawah ini berasal dari log
+pengujian nyata, bukan perkiraan.
 
 | Butir | Yang diuji otomatis | Hasil nyata |
 |---|---|---|
@@ -275,34 +267,11 @@ tidak bisa dirender di batchmode. Kontrasnya sudah dihitung manual dan lolos WCA
 (lihat tabel di bagian 2), dan tampilannya bisa diperiksa lewat
 **Game > Ambil Screenshot HUD** dari Editor.
 
-### Cara menjalankan ulang verifikasi
+### Membuat ulang scene & bake NavMesh
 
-Lewat menu Editor: **Game > Verifikasi Play Mode**.
-
-Lewat terminal (PowerShell / Git Bash), dari folder root repo:
-
-    & "C:\Program Files\Unity 2022.3.62f3\Editor\Unity.exe" -batchmode -accept-apiupdate `
-      -projectPath "UTS_TeknologiGame" `
-      -executeMethod PlayModeCheck.RunAll `
-      -logFile "$env:TEMP\verify.log"
-
-Exit code `0` = semua lulus. Cari baris `CEK PASS` / `CEK FAIL` di log.
-
-### Cara mengambil ulang screenshot
-
-Screenshot sudut arena (tanpa HUD), lewat menu Editor **Game > Ambil Screenshot Bukti**
-atau terminal dengan `-executeMethod ScreenshotBukti.Ambil`.
-
-Screenshot HUD (crosshair + bar darah) lewat menu Editor **Game > Ambil Screenshot HUD**.
-Ini **harus dari Editor GUI**, tidak bisa dari terminal: `ScreenCapture` butuh backbuffer
-layar nyata, sedangkan batchmode memakai display dummy tanpa backbuffer. Di batchmode
-perintahnya berhenti sendiri dengan pesan jelas.
-
-### Pemeriksaan statis
-
-    python _cek/lint_unity_cs.py
-
-Hasil: 13 file diperiksa, kurung seimbang, nama class == nama file, semua tipe ada.
+Menu Editor: **Game > Build Scene Arena (Arena + AI + Tembak)**.
+Scene dibangun ulang dari kode lalu NavMesh di-bake otomatis di akhir proses.
+Ada juga **Game > Bake NavMesh (ulang)** kalau hanya ingin bake ulang.
 
 ---
 
@@ -331,5 +300,5 @@ Hasil: 13 file diperiksa, kurung seimbang, nama class == nama file, semua tipe a
 | Tampilan akhir / sensasi permainan | butuh render + GPU | rekam layar saat bermain |
 | Kedipan merah & bar darah di layar | butuh render | lihat saat menembak musuh |
 
-Screenshot hasil render otomatis **sudah tersedia** di `Bukti_Screenshot/` sebagai bukti
-visual awal; untuk bukti gerak sebaiknya tetap rekam layar.
+Screenshot tidak ikut di repo (hanya dipakai saat verifikasi di komputer pengembang).
+Untuk laporan, ambil sendiri dari Game view; untuk bukti gerak sebaiknya rekam layar.
