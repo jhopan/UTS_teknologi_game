@@ -4,7 +4,7 @@ Project Unity 2022.3 LTS: arena 3D dengan AI musuh yang mengejar Player memakai
 **NavMeshAgent**, dan sistem menembak memakai **Raycast** lengkap dengan proyektil.
 
 Semua yang diminta soal **sudah jadi, sudah di-bake, dan sudah diuji otomatis**
-(26 pemeriksaan, 0 gagal - lihat bagian 5).
+(27 pemeriksaan, 0 gagal - lihat bagian 5).
 
 > Catatan: folder `Library/`, `Temp/`, dan file `.log` sengaja tidak ikut di repo
 > (lihat `.gitignore`). Unity akan membuat ulang `Library/` saat project pertama kali
@@ -20,7 +20,7 @@ Semua yang diminta soal **sudah jadi, sudah di-bake, dan sudah diuji otomatis**
 | **1b.** Bake arena pakai NavMesh | **Sudah di-bake**: 204 titik, 88 segitiga, luas walkable **1369.4 m²** | `Assets/Scenes/Arena/NavMesh.asset` (12,8 KB) |
 | **1c.** Musuh (Cylinder/Capsule) mengejar Player pakai NavMeshAgent | 4 musuh Capsule + `NavMeshAgent`, otomatis mengejar Player | `Assets/Scripts/MusuhAI.cs` |
 | **2a.** Player menembak klik kiri pakai Raycast | Klik kiri = raycast dari tengah layar (crosshair) + **proyektil terlihat terbang** | `Assets/Scripts/PlayerTembak.cs`, `Proyektil.cs` |
-| **2b.** Raycast deteksi musuh, hitung `hit.distance`, cetak ke Console | Mencetak `Kena Musuh pada jarak 11.5 meter` | Console (lihat bagian 5) |
+| **2b.** Raycast deteksi musuh, hitung jarak, cetak ke Console | Mencetak `Kena Musuh pada jarak 5.8 meter` | Console (lihat bagian 5) |
 | **2c.** HP musuh berkurang; HP <= 0 musuh hancur (Destroy) | HP 100, damage 25/tembakan; 4 tembakan -> hancur | Bar HP musuh + Console |
 
 ---
@@ -167,14 +167,25 @@ Bagian yang bisa diatur di Inspector (`PlayerTembak`):
 | `efekKenaAktif` | aktif | ledakan kecil di titik kena |
 | `ujungLaras` | `Main Camera > UjungLaras` | titik asal proyektil |
 
-### 2b. hit.distance dicetak ke Console
-Struct `RaycastHit` menyimpan hasil tembakan. Jarak diambil dari `hit.distance` lalu
-dicetak **persis seperti contoh soal**:
+### 2b. Jarak tembakan dicetak ke Console
+Sinar memang dibuat dari kamera (`ScreenPointToRay`) supaya tembakan tepat mengikuti
+crosshair. Tetapi kamera orang ketiga berada **~6.6 m di belakang** badan Player, jadi
+kalau `hit.distance` mentah yang dicetak, angkanya terlihat lebih jauh daripada jarak
+sebenarnya dari Player.
 
-    Debug.Log("Kena Musuh pada jarak " + FormatAngka.F(hit.distance, "F1") + " meter");
+Karena itu jarak dihitung dari **badan Player** ke titik kena, lalu dicetak:
 
-Hasil nyata saat verifikasi: `Kena Musuh pada jarak 11.5 meter`.
-Baris detail tambahan juga dicetak (nama musuh, titik kena, normal permukaan).
+    float jarakDariPlayer = Vector3.Distance(badanPlayer.position, titikKena);
+    Debug.Log("Kena Musuh pada jarak " + FormatAngka.F(jarakDariPlayer, "F1") + " meter");
+
+Hasil nyata saat verifikasi: `Kena Musuh pada jarak 5.8 meter`.
+Baris detail mencatat keduanya supaya bisa dibandingkan:
+
+    [Game] detail tembakan -> musuh 'Musuh_3' | jarak dari Player 5.84 m
+           | hit.distance dari kamera 11.45 m | titik kena ... | normal ...
+
+Perbedaan 11.45 m (kamera) vs 5.84 m (Player) itu wajar: selisihnya adalah jarak
+kamera ke badan Player (~5.6 m pada sudut tembakan tersebut).
 
 ### 2c. HP musuh berkurang, HP <= 0 musuh hancur
 `MusuhAI` punya `hpMaks = 100`. Tiap tembakan yang mengenai musuh mengurangi
@@ -232,7 +243,7 @@ Jalankan `_cek/jalankan_unity.bat` untuk membuatnya lagi.
 ## 5. Verifikasi otomatis (SUDAH dijalankan - semua lulus)
 
 Scene dibuat dan diuji **tanpa GUI** (batchmode) memakai `PlayModeCheck`.
-Hasil: **26 pemeriksaan, 0 gagal**.
+Hasil: **27 pemeriksaan, 0 gagal**.
 
 | Butir | Yang diuji otomatis | Hasil nyata |
 |---|---|---|
@@ -252,11 +263,12 @@ Hasil: **26 pemeriksaan, 0 gagal**.
 | 2a | raycast dari kamera mengenai musuh | kena Musuh_1 pada 12 m |
 | 2a | **proyektil tampilan diluncurkan saat menembak** | 4 proyektil diluncurkan |
 | 2a | proyektil tidak punya collider (tidak mengganggu raycast) | 0 dari 0 proyektil punya collider |
-| 2b | **Console mencetak "Kena Musuh pada jarak ... meter"** | `Kena Musuh pada jarak 11.5 meter` |
+| 2a | **ujung laras di tubuh Player, bukan di udara** | tinggi 1.430 m (kepala Player 2.0 m) |
+| 2b | **Console mencetak "Kena Musuh pada jarak ... meter"** | `Kena Musuh pada jarak 5.8 meter` |
 | 2c | **HP musuh berkurang tiap tembakan** | 4 tembakan, damage 25,000 |
 | 2c | **HP <= 0 -> musuh HANCUR (Destroy)** | hancur setelah 4 tembakan |
 | 2c | jumlah musuh berkurang setelah dihancurkan | 4 musuh -> 3 musuh |
-| 2b | `hit.distance` terukur | jarak terakhir 11.45 m, 4 kena musuh |
+| 2b | jarak dari Player terukur | jarak terakhir 5.84 m, 4 kena musuh |
 
 Bagian HUD (crosshair, bar darah) **belum tercakup** pemeriksaan ini karena `OnGUI`
 tidak bisa dirender di batchmode. Kontrasnya sudah dihitung manual dan lolos WCAG AA

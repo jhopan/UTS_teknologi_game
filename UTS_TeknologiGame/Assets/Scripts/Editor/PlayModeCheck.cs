@@ -404,7 +404,16 @@ public static class PlayModeCheck
             kena && cek.collider.GetComponentInParent<MusuhAI>() == musuhUji,
             kena ? ("kena '" + cek.collider.name + "' pada " + F(cek.distance) + " m") : "tidak kena apa pun");
 
-        if (kena) Log("2b. jarak yang akan dicetak Console = " + FormatAngka.F(cek.distance, "F1") + " meter");
+        if (kena)
+        {
+            // Jarak yang dicetak Console diukur dari BADAN Player, bukan dari kamera.
+            GameObject pemain = GameObject.Find("Player");
+            Vector3 acuan = pemain != null ? pemain.transform.position : kam.transform.position;
+            float dariPlayer = Vector3.Distance(acuan, cek.point);
+
+            Log("2b. jarak yang akan dicetak Console = " + FormatAngka.F(dariPlayer, "F1") + " meter"
+                + " (dari badan Player; hit.distance dari kamera " + FormatAngka.F(cek.distance, "F2") + " m)");
+        }
     }
 
     static void TembakSatuKali()
@@ -459,6 +468,20 @@ public static class PlayModeCheck
             if (p.GetComponent<Collider>() != null) adaCollider++;
         Cek("2a. proyektil tidak punya collider (tidak mengganggu raycast)",
             adaCollider == 0, adaCollider + " dari " + proyektil.Length + " proyektil punya collider");
+
+        // ujung laras harus berada di tubuh Player, bukan di kamera. Kalau salah parent,
+        // proyektil muncul dari udara setinggi kamera (~4 m), bukan dari badan Player.
+        GameObject pemain2 = GameObject.Find("Player");
+        if (penembak != null && penembak.ujungLaras != null && pemain2 != null)
+        {
+            float tinggi = penembak.ujungLaras.position.y;
+            float jarakKePlayer = Vector3.Distance(penembak.ujungLaras.position, pemain2.transform.position);
+
+            Cek("2a. ujung laras (asal proyektil) berada di tubuh Player, bukan di udara",
+                tinggi < 2.0f && jarakKePlayer < 1.5f,
+                "tinggi " + F(tinggi) + " m dari tanah, jarak ke pusat badan Player "
+                + F(jarakKePlayer) + " m (kepala Player = 2.0 m)");
+        }
 
         // 2c. HP berkurang & musuh hancur
         bool hancur = musuhUji == null || musuhUji.SudahMati;

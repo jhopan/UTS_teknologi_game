@@ -19,7 +19,7 @@ public class PlayerTembak : MonoBehaviour
 
     [Header("Proyektil (tampilan tembakan)")]
     public bool pakaiProyektil = true;
-    [Tooltip("Titik asal proyektil. Kalau kosong, dipakai posisi kamera.")]
+    [Tooltip("Titik asal proyektil, di dada Player. Kalau kosong, dipakai posisi kamera.")]
     public Transform ujungLaras;
     public float kecepatanProyektil = 95f;
     public float ukuranProyektil = 0.16f;
@@ -148,9 +148,16 @@ public class PlayerTembak : MonoBehaviour
         // titik kena: kalau tidak mengenai apa pun, dihitung dari ujung sinar
         Vector3 titikKena = kena ? hit.point : ray.origin + ray.direction * jarakMaks;
 
+        // Jarak yang dilaporkan diukur dari BADAN Player, bukan dari kamera.
+        // Sinar memang keluar dari kamera (supaya crosshair akurat), tapi kamera
+        // berada ~6.6 m di BELAKANG Player. Kalau hit.distance kamera yang dicetak,
+        // angkanya terlihat lebih jauh daripada jarak sebenarnya dari Player.
+        Vector3 acuan = badanPlayer != null ? badanPlayer.position : ray.origin;
+        float jarakDariPlayer = Vector3.Distance(acuan, titikKena);
+
         if (kena)
         {
-            JarakTembakanTerakhir = hit.distance;
+            JarakTembakanTerakhir = jarakDariPlayer;
             if (gambarGarisBantu) GambarGarisBantu(ray.origin, hit.point);
 
             MusuhAI musuh = hit.collider.GetComponentInParent<MusuhAI>();
@@ -159,16 +166,17 @@ public class PlayerTembak : MonoBehaviour
             {
                 jumlahKenaMusuh++;
 
-                // ==== SOAL 2b: hit.distance dihitung lalu DICETAK ke Console ====
+                // ==== SOAL 2b: jarak tembakan dihitung lalu DICETAK ke Console ====
                 // FormatAngka.F dipakai supaya pemisah desimalnya selalu TITIK
                 // ("11.5 meter"), tidak ikut bahasa Windows (yang bisa jadi "11,5").
-                Debug.Log("Kena Musuh pada jarak " + FormatAngka.F(hit.distance, "F1") + " meter");
+                Debug.Log("Kena Musuh pada jarak " + FormatAngka.F(jarakDariPlayer, "F1") + " meter");
                 Debug.Log("[Game] detail tembakan -> musuh '" + musuh.name
-                    + "' | jarak tepat " + FormatAngka.F(hit.distance, "F2") + " m"
+                    + "' | jarak dari Player " + FormatAngka.F(jarakDariPlayer, "F2") + " m"
+                    + " | hit.distance dari kamera " + FormatAngka.F(hit.distance, "F2") + " m"
                     + " | titik kena " + FormatAngka.V(hit.point)
                     + " | normal " + FormatAngka.V(hit.normal));
 
-                infoTerakhir = "KENA MUSUH " + musuh.name + " @ " + FormatAngka.F(hit.distance, "F1") + " m";
+                infoTerakhir = "KENA MUSUH " + musuh.name + " @ " + FormatAngka.F(jarakDariPlayer, "F1") + " m";
 
                 // ==== SOAL 2c: HP musuh berkurang; HP <= 0 -> musuh hancur ====
                 musuh.TerimaDamage(damage);
@@ -176,8 +184,8 @@ public class PlayerTembak : MonoBehaviour
             else
             {
                 Debug.Log("[Game] Raycast mengenai '" + hit.collider.name + "' pada jarak "
-                    + FormatAngka.F(hit.distance, "F2") + " m (bukan musuh, HP tidak berkurang).");
-                infoTerakhir = "kena " + hit.collider.name + " @ " + FormatAngka.F(hit.distance, "F1") + " m";
+                    + FormatAngka.F(jarakDariPlayer, "F2") + " m dari Player (bukan musuh, HP tidak berkurang).");
+                infoTerakhir = "kena " + hit.collider.name + " @ " + FormatAngka.F(jarakDariPlayer, "F1") + " m";
             }
         }
         else
@@ -195,6 +203,7 @@ public class PlayerTembak : MonoBehaviour
 
     void LuncurkanProyektil(Vector3 titikKena)
     {
+        // Titik asal proyektil: dada Player kalau tersedia, kalau tidak dari kamera.
         Vector3 asal = ujungLaras != null ? ujungLaras.position : kamera.transform.position;
 
         GameObject go = AsetVisual.BuatObjekMenyala("Proyektil", warnaProyektil);

@@ -176,11 +176,16 @@ public static class SceneBuilder
         penembak.damage = 25f;
         if (layerPlayer >= 0) penembak.maskTembakan = ~(1 << layerPlayer);
 
-        // Ujung laras: titik asal proyektil. Ditaruh sebagai anak KAMERA supaya
-        // proyektil selalu muncul dari arah pandang, sedikit ke kanan-bawah seperti
-        // senjata yang dipegang di sisi layar.
-        GameObject ujungLaras = NewEmpty("UjungLaras", kameraObj.transform);
-        ujungLaras.transform.localPosition = new Vector3(0.32f, -0.26f, 0.75f);
+        // Ujung laras: titik asal proyektil. Ditaruh sebagai anak PLAYER, bukan anak
+        // kamera, supaya proyektil benar-benar keluar dari tubuh Player.
+        // Kalau dijadikan anak kamera, asalnya ikut naik setinggi kamera (~4.2 m)
+        // sehingga proyektil terlihat muncul dari udara di atas kepala.
+        // Posisinya di dada, agak ke kanan-depan seperti memegang senjata:
+        //   x = +0.35  (ke kanan Player)
+        //   y = +0.35  (dari pusat badan, jadi ~1.35 m dari tanah: setinggi dada)
+        //   z = +0.45  (sedikit ke depan)
+        GameObject ujungLaras = NewEmpty("UjungLaras", player.transform);
+        ujungLaras.transform.localPosition = new Vector3(0.35f, 0.35f, 0.45f);
         penembak.ujungLaras = ujungLaras.transform;
 
         // ---------- 1c. MUSUH (NavMeshAgent) ----------

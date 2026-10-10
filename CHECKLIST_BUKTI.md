@@ -11,7 +11,7 @@ Tanda **[otomatis]** = sudah tersedia di folder ini, tidak perlu dikerjakan ulan
 - [x] **[otomatis]** Data NavMesh `Assets/Scenes/Arena/NavMesh.asset` (12,8 KB)
 - [x] **[otomatis]** Log bake NavMesh - `_cek/build.log`
       baris: `[Game] BAKE NAVMESH SELESAI -> 204 titik, 88 segitiga, luas area walkable 1369.4 m2.`
-- [x] **[otomatis]** Log verifikasi otomatis - `_cek/verify.log` (26 CEK PASS, 0 FAIL)
+- [x] **[otomatis]** Log verifikasi otomatis - `_cek/verify.log` (27 CEK PASS, 0 FAIL)
 - [x] **[otomatis]** 5 screenshot hasil render - folder `UTS_TeknologiGame/Bukti_Screenshot/`
   - [x] `01_arena_dari_atas.png` - tampak keseluruhan arena 40x40 m + rintangan + Player + 4 musuh
   - [x] `02_musuh_mengejar_player.png` - musuh bergerak mendekati Player
@@ -63,6 +63,8 @@ Ambil sambil scene `Arena` dalam keadaan **Play**.
 - [ ] Arahkan crosshair ke musuh, **klik kiri** -> di Console muncul baris:
       `Kena Musuh pada jarak ... meter`
       **Screenshot Console-nya** (ini bukti utama soal 2b)
+      Jarak ini diukur dari **badan Player**, bukan dari kamera (lihat `CATATAN_TEORI.md`).
+- [ ] Perhatikan proyektil keluar dari **dada Player**, bukan dari udara di atas kepala
 - [ ] **Game view**: bar darah di atas kepala musuh turun sesuai tembakan
       (jarak tembakan juga tercatat di Console; tidak ada lagi panel di layar)
 

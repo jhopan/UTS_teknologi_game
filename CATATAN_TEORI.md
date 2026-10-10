@@ -125,6 +125,12 @@ memeriksa satu per satu "apakah yang kena Player?".
   (Ini yang sempat bikin satu pemeriksaan gagal lalu diperbaiki.)
 - **Sinar tidak terlihat di Game view.** `Debug.DrawRay` / `Debug.DrawLine` hanya muncul di
   **Scene view**.
+- **Dari mana jarak diukur.** `hit.distance` mengukur dari **titik asal sinar**. Karena sinar
+  dibuat dari kamera, `hit.distance` = jarak **kamera** ke titik kena, bukan jarak Player ke
+  musuh. Pada kamera orang ketiga, kamera berada ~6,6 m di belakang badan Player, jadi
+  angkanya bisa terlihat jauh lebih besar. Kalau yang dilaporkan adalah "jarak tembakan
+  Player ke musuh", hitung terpisah dengan
+  `Vector3.Distance(badanPlayer.position, hit.point)`.
 - **Trigger tidak terdeteksi raycast** kalau `QueryTriggerInteraction.Ignore` dipakai.
   Di sini memang di-ignore supaya zona trigger tidak menahan tembakan.
 
