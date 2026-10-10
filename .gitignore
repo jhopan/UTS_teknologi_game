@@ -32,10 +32,33 @@ sysinfo.txt
 *.unitypackage
 *.app
 
-# ---------------------------------------------------------------- Log & laporan lokal
-# Log berisi path pribadi dan IP jaringan lokal, jadi tidak dipublikasikan.
-# Jalankan ulang lewat _cek/jalankan_unity.bat untuk membuatnya lagi.
-_cek/*.log
+# ---------------------------------------------------------------- Catatan & alat bantu lokal
+# Semua di bawah ini tetap ada di komputer pengembang, hanya tidak dipublikasikan.
+# Repo publik cukup berisi README + project Unity yang bisa langsung dijalankan.
+
+# Catatan pribadi untuk laporan/presentasi (README.md tetap ikut)
+AGENTS.md
+CATATAN_TEORI.md
+CHECKLIST_BUKTI.md
+
+# Folder alat bantu: lint, skrip batch, dan log
+# (log berisi path pribadi dan IP jaringan lokal)
+_cek/
+
+# Screenshot bukti: hanya untuk verifikasi lokal, bukan bagian dari project
+UTS_TeknologiGame/Bukti_Screenshot/
+
+# ---------------------------------------------------------------- Skrip keperluan pengujian
+# Tiga skrip ini hanya alat verifikasi/pemotretan saat pengembangan.
+# Project tetap bisa dikompilasi dan dimainkan tanpanya, karena script gameplay
+# tidak bergantung pada mereka. SceneBuilder.cs SENGAJA tidak di-ignore karena
+# dipakai untuk membangun scene dan bake NavMesh.
+UTS_TeknologiGame/Assets/Scripts/Editor/PlayModeCheck.cs
+UTS_TeknologiGame/Assets/Scripts/Editor/PlayModeCheck.cs.meta
+UTS_TeknologiGame/Assets/Scripts/Editor/ScreenshotBukti.cs
+UTS_TeknologiGame/Assets/Scripts/Editor/ScreenshotBukti.cs.meta
+UTS_TeknologiGame/Assets/Scripts/Editor/ScreenshotHUD.cs
+UTS_TeknologiGame/Assets/Scripts/Editor/ScreenshotHUD.cs.meta
 
 # ---------------------------------------------------------------- OS & editor
 .DS_Store
