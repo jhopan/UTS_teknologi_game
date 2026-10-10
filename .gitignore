@@ -1,0 +1,46 @@
+# ---------------------------------------------------------------- Unity
+# Folder hasil generate, tidak perlu masuk repo (16 MB, dibuat ulang saat buka)
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Cc]rashlytics/
+[Ee]xported[Oo]bj/
+[Rr]ecordings/
+
+# File project yang di-generate ulang oleh Unity / IDE
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+sysinfo.txt
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# ---------------------------------------------------------------- Log & laporan lokal
+# Log berisi path pribadi dan IP jaringan lokal, jadi tidak dipublikasikan.
+# Jalankan ulang lewat _cek/jalankan_unity.bat untuk membuatnya lagi.
+_cek/*.log
+
+# ---------------------------------------------------------------- OS & editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vs/
+.vscode/
+.idea/
