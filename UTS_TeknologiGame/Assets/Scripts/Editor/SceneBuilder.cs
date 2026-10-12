@@ -307,7 +307,12 @@ public static class SceneBuilder
             && go.GetComponent<NavMeshAgent>() == null
             && go.GetComponent<CharacterController>() == null)
         {
+            // NavigationStatic deprecated di Unity 2022+ (warning CS0618), tapi
+            // NavMeshBuilder.BuildNavMesh() masih membacanya dan tidak ada pengganti
+            // langsung untuk workflow bake-in-Editor ini. Suppress warning secara lokal.
+#pragma warning disable CS0618
             GameObjectUtility.SetStaticEditorFlags(go, StaticEditorFlags.NavigationStatic);
+#pragma warning restore CS0618
             jumlah++;
         }
 
@@ -387,7 +392,9 @@ public static class SceneBuilder
 
     static void JadikanStatis(GameObject go)
     {
+#pragma warning disable CS0618
         GameObjectUtility.SetStaticEditorFlags(go, StaticEditorFlags.NavigationStatic);
+#pragma warning restore CS0618
     }
 
     /// Memberi material berwarna sederhana supaya objek tidak semua abu-abu.
